@@ -1,5 +1,6 @@
 import SwissEph from "./vendor/swisseph-wasm/src/swisseph.js";
 import { makeCalculator, addDays } from "./calc.js";
+import { initAccount, signedIn, saveRecord } from "./account.js";
 
 const $ = (id) => document.getElementById(id);
 const status = (t) => { $("status").textContent = t; };
@@ -45,6 +46,27 @@ document.querySelectorAll("[data-place]").forEach((input) => {
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
+// ---------- accounts ----------
+
+let lastInput = null;
+initAccount((r) => {
+  $("name").value = r.name;
+  $("date").value = r.death_date;
+  $("time").value = r.death_time ? r.death_time.slice(0, 5) : "";
+  chosen.lived = r.lived; chosen.home = r.hometown;
+  $("lived").value = r.lived.name; $("home").value = r.hometown.name;
+  $("region").value = r.region;
+  $("form").requestSubmit();
+}).catch((e) => console.error("sign-in setup failed", e));
+
+$("save").addEventListener("click", async () => {
+  if (!lastInput) return;
+  $("save").disabled = true;
+  const err = await saveRecord({ ...lastInput, email_reminders: $("remind").checked });
+  $("saveStatus").textContent = err || "Saved.";
+  $("save").disabled = false;
+});
+
 // ---------- results ----------
 
 const fmt = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString(undefined,
@@ -64,7 +86,11 @@ $("form").addEventListener("submit", async (e) => {
     const years = Math.max(10, new Date().getFullYear() - y + 10);
     const places = [chosen.lived, chosen.home];
     const runs = places.map((p) => ({ place: p, ...calc.memorialDates(death, chosen.lived, p, years) }));
+    lastInput = { name: $("name").value.trim(), death_date: $("date").value, death_time: $("time").value || null,
+      lived: chosen.lived, hometown: chosen.home, region: $("region").value };
     show($("name").value.trim(), runs, !$("time").value);
+    $("saveBox").hidden = !signedIn();
+    $("saveStatus").textContent = "";
     status("");
   } catch (err) {
     console.error(err);
