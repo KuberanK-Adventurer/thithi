@@ -16,6 +16,7 @@ import json
 import os
 import smtplib
 import sys
+import urllib.error
 import urllib.request
 from email.message import EmailMessage
 from pathlib import Path
@@ -41,9 +42,12 @@ class Supabase:
         req.add_header("Content-Type", "application/json")
         for k, v in (headers or {}).items():
             req.add_header(k, v)
-        with urllib.request.urlopen(req, timeout=30) as r:
-            data = r.read()
-            return json.loads(data) if data else None
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                data = r.read()
+                return json.loads(data) if data else None
+        except urllib.error.HTTPError as e:  # show Supabase's reason, not just the code
+            raise RuntimeError(f"{method} {path.split('?')[0]} -> {e.code}: {e.read()[:300].decode(errors='replace')}") from None
 
     def memorials(self) -> list[dict]:
         return self._req("GET", "/rest/v1/memorials?email_reminders=eq.true&select=*")
@@ -144,7 +148,19 @@ def run(db: Supabase, today: dt.date) -> int:
     return count
 
 
+def send_test() -> None:
+    """Send one sample email to MAIL_FROM, to check the email settings work."""
+    to = os.environ["MAIL_FROM"]
+    send(to, "Thithi reminders: test email",
+         "This is a test from the Thithi reminder job. If you can read this, email sending works.\n\n"
+         f"{SITE}")
+    print("sent a test email to the MAIL_FROM address")
+
+
 if __name__ == "__main__":
+    if os.environ.get("SEND_TEST"):
+        send_test()
+        sys.exit(0)
     db = Supabase(os.environ["SUPABASE_URL"], os.environ["SUPABASE_SERVICE_KEY"])
     n = run(db, dt.datetime.now(dt.timezone.utc).date())
     print(f"sent {n} reminder email(s)")
