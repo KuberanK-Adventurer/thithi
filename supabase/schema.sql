@@ -38,3 +38,8 @@ create table if not exists public.reminders_sent (
   primary key (memorial_id, for_date, place)
 );
 alter table public.reminders_sent enable row level security;  -- no policies: closed to the website
+
+-- Table permissions. Newer Supabase projects may not grant these automatically.
+grant select, insert, update, delete on public.memorials to authenticated;
+grant select on public.memorials to service_role;
+grant select, insert on public.reminders_sent to service_role;

@@ -8,6 +8,10 @@ on:
         description: "Only print the emails, don't send"
         type: boolean
         default: true
+      send_test:
+        description: "Send one test email to the reminders Gmail address, then stop"
+        type: boolean
+        default: false
 jobs:
   send:
     runs-on: ubuntu-latest
@@ -26,4 +30,5 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          SEND_TEST: ${{ github.event_name == 'workflow_dispatch' && inputs.send_test && '1' || '' }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '' }}
