@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7a2e0e">
+<title>Thithi</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>Thithi</h1>
+  <p class="sub">Remembrance dates by the Tamil calendar</p>
+</header>
+
+<main>
+  <form id="form" class="card" autocomplete="off">
+    <h2>Who are you remembering?</h2>
+
+    <label>Their name
+      <input id="name" required placeholder="e.g. Amma">
+    </label>
+
+    <div class="row">
+      <label>Date of passing
+        <input id="date" type="date" required>
+      </label>
+      <label>Time
+        <input id="time" type="time">
+      </label>
+    </div>
+    <p class="hint">If you don't know the time, leave it blank. Noon will be used, and the date may need checking with your priest.</p>
+
+    <label>Where they lived when they passed
+      <input id="lived" required placeholder="Start typing a town or city" data-place>
+    </label>
+    <ul class="suggest" data-for="lived"></ul>
+
+    <label>Where they are from (hometown)
+      <input id="home" required placeholder="Start typing a town or city" data-place>
+    </label>
+    <ul class="suggest" data-for="home"></ul>
+
+    <label>Tamil region your family follows
+      <select id="region">
+        <option>Tamil Nadu</option>
+        <option>Sri Lanka, North</option>
+        <option>Sri Lanka, East</option>
+        <option>Malaysia or Singapore</option>
+        <option>Other</option>
+      </select>
+    </label>
+
+    <button id="go" type="submit">Show the dates</button>
+    <p id="status" class="status" role="status"></p>
+  </form>
+
+  <section id="results" hidden>
+    <div class="card summary" id="summary"></div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div id="lists"></div>
+    <p class="hint center">Dates use the Thirukanitha method. Please confirm important dates with your family priest.</p>
+  </section>
+</main>
+
+<footer>
+  Free and open source (<a href="https://github.com/KuberanK-Adventurer/thithi">code</a>).
+  Places: <a href="https://open-meteo.com/">Open-Meteo</a>, data from <a href="https://www.geonames.org/">GeoNames</a>.
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
