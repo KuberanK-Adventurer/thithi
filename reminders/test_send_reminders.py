@@ -44,3 +44,9 @@ def test_due_one_week_before(monkeypatch):
 def test_nothing_due():
     db = FakeDB()
     assert sr.run(db, dt.date(2027, 1, 1)) == 0
+
+
+def test_smtp_login_cleans_pasted_values(monkeypatch):
+    monkeypatch.setenv("SMTP_USER", " someone@gmail.com\n")
+    monkeypatch.setenv("SMTP_PASSWORD", "abcd efgh ijkl mnop\n")
+    assert sr.smtp_login() == ("someone@gmail.com", "abcdefghijklmnop")
