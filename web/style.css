@@ -68,3 +68,13 @@ footer a { color: inherit; }
 .check { display: flex; gap: 10px; align-items: center; font-weight: 400; margin: 0; }
 .check input { width: 24px; min-height: 24px; height: 24px; margin: 0; -webkit-appearance: checkbox; appearance: auto; }
 .status:empty { min-height: 0; margin: 0; }
+.help-link { margin: 6px 0 0; font-size: 15px; }
+.help-link a, .back a, .help a { color: var(--accent); }
+.back { margin: 0 0 8px; font-size: 15px; }
+.help p { margin: 0 0 10px; }
+.help sup a { text-decoration: none; padding: 0 1px; }
+.steps { margin: 0 0 10px; padding-left: 22px; }
+.steps li { margin-bottom: 8px; }
+.sources ol { margin: 0; padding-left: 22px; font-size: 15px; }
+.sources li { margin-bottom: 8px; overflow-wrap: anywhere; }
+.hint a { color: var(--accent); }
