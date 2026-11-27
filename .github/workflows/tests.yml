@@ -13,6 +13,7 @@ jobs:
           python-version: "3.12"
       - run: pip install -r calculator/requirements.txt
       - run: cd calculator && python -m pytest -q
+      - run: cd reminders && python -m pytest -q
   web:
     runs-on: ubuntu-latest
     steps:
