@@ -17,6 +17,26 @@
 </header>
 
 <main>
+  <section id="account" class="card" hidden>
+    <div id="signedOut">
+      <h2>Sign in to save and get reminders</h2>
+      <p class="hint">We'll email you a link to sign in. No password needed.</p>
+      <form id="signin">
+        <label>Your email
+          <input id="email" type="email" required autocomplete="email" inputmode="email">
+        </label>
+        <button type="submit">Email me a sign-in link</button>
+      </form>
+      <p id="signinStatus" class="status" role="status"></p>
+    </div>
+    <div id="signedIn" hidden>
+      <p class="who">Signed in as <strong id="whoEmail"></strong> <a href="#" id="signout">Sign out</a></p>
+      <h2>Your family members</h2>
+      <ul id="saved" class="saved"></ul>
+      <p id="savedEmpty" class="hint">No one saved yet. Fill in the form below, then tap Save.</p>
+    </div>
+  </section>
+
   <form id="form" class="card" autocomplete="off">
     <h2>Who are you remembering?</h2>
 
@@ -60,6 +80,11 @@
 
   <section id="results" hidden>
     <div class="card summary" id="summary"></div>
+    <div id="saveBox" class="card" hidden>
+      <label class="check"><input type="checkbox" id="remind" checked> Email me a week before each date</label>
+      <button type="button" id="save">Save</button>
+      <p id="saveStatus" class="status" role="status"></p>
+    </div>
     <div class="tabs" role="tablist" id="tabs"></div>
     <div id="lists"></div>
     <p class="hint center">Dates use the Thirukanitha method. Please confirm important dates with your family priest.</p>
