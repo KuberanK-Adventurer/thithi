@@ -114,14 +114,27 @@ def send(to: str, subject: str, body: str) -> None:
         print(f"--- would send to {to}\nSubject: {subject}\n{body}\n")
         return
     msg = EmailMessage()
-    msg["From"] = f"Thithi reminders <{os.environ['MAIL_FROM']}>"
+    msg["From"] = f"Thithi reminders <{os.environ['MAIL_FROM'].strip()}>"
     msg["To"] = to
     msg["Subject"] = subject
     msg.set_content(body)
-    host, port = os.environ["SMTP_HOST"], int(os.environ.get("SMTP_PORT", "465"))
+    host, port = os.environ["SMTP_HOST"].strip(), int(os.environ.get("SMTP_PORT", "465").strip())
+    user, password = smtp_login()
     with smtplib.SMTP_SSL(host, port, timeout=30) as s:
-        s.login(os.environ["SMTP_USER"], os.environ["SMTP_PASSWORD"])
+        s.login(user, password)
         s.send_message(msg)
+
+
+def smtp_login() -> tuple[str, str]:
+    """Clean up pasted values: stray spaces or line breaks break the Gmail login.
+    Gmail shows app passwords in groups of four with spaces; the spaces are not part of it."""
+    user = os.environ["SMTP_USER"].strip()
+    password = "".join(os.environ["SMTP_PASSWORD"].split())
+    if "@" not in user:
+        print("warning: SMTP_USER should be the full Gmail address", file=sys.stderr)
+    if user.endswith("@gmail.com") and len(password) != 16:
+        print(f"warning: a Gmail app password has 16 letters; this one has {len(password)}", file=sys.stderr)
+    return user, password
 
 
 def run(db: Supabase, today: dt.date) -> int:
@@ -150,7 +163,7 @@ def run(db: Supabase, today: dt.date) -> int:
 
 def send_test() -> None:
     """Send one sample email to MAIL_FROM, to check the email settings work."""
-    to = os.environ["MAIL_FROM"]
+    to = os.environ["MAIL_FROM"].strip()
     send(to, "Thithi reminders: test email",
          "This is a test from the Thithi reminder job. If you can read this, email sending works.\n\n"
          f"{SITE}")
